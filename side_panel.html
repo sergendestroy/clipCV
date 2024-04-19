@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <title>clipCV</title>
+    </head>
+
+    <body>
+        <div id="main-container">
+            <div id="test-div">
+                        
+            </div>
+        <template id="exp-template">
+            <div id="exp-container" class="exp-container" disabled>
+
+                <div id="edit-container">
+                    <button id="edit-btn" class="edit-btn">Edit</button>
+                </div>  
+                <div id="copy-container">
+                    <button id="copy-btn" class="copy-btn">Copy</button>
+                </div>
+                <div id="job-title-container">
+                        <label>Job Title</label>
+                        <input id="job-title" class="edit-field" placeholder="Spice Harvester Operator II"></input>
+                </div>
+                <div id="company-container">
+                    <label id="company-lbl">Company Name:</label>
+                    <input id="company-name" class="edit-field" placeholder="House Harkonnen"></input>
+                </div>
+                <div id="exp-start-date-container">
+                    <label id="start-lbl">Start Date:</label>
+                    <input id="start-date" class="edit-field" type="date" placeholder="MM/DD/YYYY" ></input>
+                </div>
+                <div id="exp-end-date-container">
+                    <label id="end-lbl">End Date:</label>
+                    <input id="end-date" class="edit-field" type="date" placeholder="MM/DD/YYYY"></input>
+                </div>
+                <div id="current-check-container">
+                    <input id="current-job" class="edit-field" type="checkbox">Current Job</input>
+                </div>
+                <div id="location-container">
+                    <label id="loc-label">Job Location:</label>
+                    <input id="location" class="edit-field" placeholder="Arrakis"></input>
+                </div>                 
+                <div id="project-container">
+                     <label id="projects-lbl">Describe your projects and responsibilities</label>
+                       <div id="project-item-container">
+                            <textarea id="project-item" class="edit-field" placeholder="Add your projects and responsibilities here..."></textarea>
+                        </div>
+                </div>
+                <div id="save-container">
+                    <button id="save-btn" class="edit-field save-experience">Save</button>
+                </div>
+                <div id="delete-container">
+                    <button id="delete-btn" class="edit-field delete-exp">Delete</button>
+                </div>
+                
+            </div>
+            </template>
+
+
+            <div id="add-more">
+                <button id="add-more-btn">+</button>  
+            </div>
+        </div>
+    </body>
+<script src="side_panel.js"></script>
+</html>
+

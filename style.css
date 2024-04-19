@@ -1,0 +1,22 @@
+:root{
+    --clr-neon: hsl(#67B271, 100%, 54%)
+  }
+  
+  head{
+    text-align: center;
+  }
+
+  label{
+    color:black;
+    text-shadow:-2px 2px 2px darkblue;
+    font-size: 0.865rem;
+    font-weight: bold;
+  }
+  
+  button:disabled{
+
+  }
+  
+  input:disabled{
+    
+  }
