@@ -17,77 +17,85 @@ document.addEventListener("DOMContentLoaded",function (){
         }};
     //saving record
     let saveExp = function (event){
-        //event.preventDefault();
-        //test.innerText = event.target.closest('div')
-        //handle edit events: if the saved click came from an existing record, 
 
+        //handle noarray event
         if(!event.target.matches('#save-btn')) return;
-        //validate further
-        //handle showing disabled form
-        //set the data
 
-        const form = event.target.closest('div.exp-container');
-        
-        let jobTitle = form.querySelector("#job-title");
-        let companyName = form.querySelector("#company-name");
-        let startDate = form.querySelector("#start-date");
-        let endDate = form.querySelector("#end-date");
-        let currentJob = form.querySelector("#current-job");
-        let location = form.querySelector("#location");
-        let projectItem = form.querySelector("#project-item");
-        
-        chrome.storage.local.get(["experiences"], (res)=>{
-            let exps = res.experiences;
-    
-            let newExp = {
-                tester: form,
-                expNumber: exps.length,
-                disabled:false,
-                jobTitle: jobTitle.value,
-                companyName: companyName.value,
-                startDate: startDate.value,
-                endDate: endDate.value || null,
-                currentJob: currentJob.value,
-                location: location.value,
-                projectItem: projectItem.value
-            }
+            let form = event.target.closest('div.exp-container');
+            
+            let jobTitle = form.querySelector("#job-title");
+            let companyName = form.querySelector("#company-name");
+            let startDate = form.querySelector("#start-date");
+            let endDate = form.querySelector("#end-date");
+            let currentJob = form.querySelector("#current-job");
+            let location = form.querySelector("#location");
+            let projectItem = form.querySelector("#project-item");
 
-            exps.push(newExp);
+            chrome.storage.local.get(["experiences"], (res)=>{ // experiences is  [{a: 1, b:2, c:3},{{a:3, b:5, c:6},{}]
+                let exps = res.experiences;
+                let newExp = {
+                    tester: form,
+                    disabled:false,
+                    expId: form.dataset.index? form.dataset.index : exps?.length,
+                    jobTitle: jobTitle.value,
+                    companyName: companyName.value,
+                    startDate: startDate.value,
+                    endDate: endDate.value || null,
+                    currentJob: currentJob.value,
+                    location: location.value,
+                    projectItem: projectItem.value
+                    }
 
-            disableCard(form);
+                if(!form.dataset.index){ //no index? then push and set --> event.target.dataset.index is empty
+                                    
+                    exps.push(newExp);  
+                    disableCard(form);
 
-            chrome.storage.local.set({
-                experiences: exps
-                
-            }, ()=>{
-                test.innerText = form.getElementsByClassName("edit-field");
-                chrome.storage.local.get(["experiences"], ()=>{
-                    chrome.runtime.sendMessage(form);
+                    chrome.storage.local.set({
+                        experiences: exps    
+                        }, ()=>{
+                        test.innerText = form.getElementsByClassName("edit-field");
+                        chrome.storage.local.get(["experiences"], ()=>{
+                        chrome.runtime.sendMessage(newExp.expId);
+                            })
+                        });
 
-                })
-            })
+                }else{ //yes index? then just set; next step, make sure that you save it with the same num
+                    let indexNum = form.dataset.index;
+                    
+                    exps[indexNum] = newExp;
+                    disableCard(form);
 
-        })
-        
+                    chrome.storage.local.set({
+                        experiences: exps
+                    }, ()=>{
+                        test.innerText = form.getElementsByClassName("edit-field");
+                        
+                        chrome.storage.local.get(["experiences"], ()=>{
+                        chrome.runtime.sendMessage({indexNum, newExp});
+                        })
+                    });
+
+                };
+
+        });
+          
     };
     
-    //editing record
+    //editing record -> Done
     let editExp = function (event){
         if(!event.target.matches('#edit-btn')) return;
-        const form = event.target.closest('div.exp-container');
+        let form = event.target.closest('div.exp-container');
         
         let divElms = form.getElementsByClassName("edit-field");
         for (let element =0;element<divElms.length;element++){
                 divElms[element].disabled = false;    
-              //make sure that when saving you edit the current record  
         
-            }
-        
-    
+            } 
     
     };
 
-    //copying record
+    //copying record -> wait on this one, might not be needed
     let copyExp = function (event) {
         if(!event.target.elements['copy-btn']) return;
         //selects the card info: let's retrieve as a dictionary
@@ -107,14 +115,35 @@ document.addEventListener("DOMContentLoaded",function (){
     let delExp = function (event) {
         if(!event.target.matches('#delete-btn')) return;
         
+        let form = event.target.closest('div.exp-container');
+
+        //if parent container has index, then proceed with delete, else, return
+        if(!form.dataset.index) return;
+
+        //retrieve data index of parent container of element clicked
+        let currIndex = form.dataset.index;
+        //use getter to retrieve data from storage.local
+        chrome.storage.local.get(["experiences"], (res) =>{
+            let exps = res.experiences;
+
+            let cleanExps = exps.filter((e) => e.expId !== currIndex);
+        //delete in place the element of index data-index in the array
+            chrome.storage.local.set({
+                experiences: cleanExps
+            });           
+            chrome.runtime.sendMessage({exps, currIndex}); 
+        });
+
+        //do event.target.closest('div.exp-container').remove()
         event.target.closest('div.exp-container').remove();
-        chrome.runtime.sendMessage(event.target);
-        //event.target.closest('div.exp-form').remove();
+
+        //reassign index numbers from 0 to n-total
     };
     
     addMoreBtn.addEventListener("click",  () => {
         const expHTML = expTemplate.content.cloneNode(true);
         mainContainer.appendChild(expHTML);
+
         
     });
 
@@ -126,27 +155,37 @@ document.addEventListener("DOMContentLoaded",function (){
 
 
 //creates the ExpCard from the template
-function createExpCard(jobTitle, companyName, startDate, endDate, currentJob, location, projectItem){
-    const cardTemplate = document.getElementById('exp-template');
-    const cardHTML = cardTemplate.content.cloneNode(true);
-    
-    let cardJobTitle = cardHTML.querySelector('#job-title');
-    let cardCompanyName = cardHTML.querySelector("#company-name");
-    let cardStartDate = cardHTML.querySelector("#start-date");
-    let cardEndDate = cardHTML.querySelector("#end-date");
-    let cardCurrentJob = cardHTML.querySelector("#current-job");
-    let cardLocation = cardHTML.querySelector("#location");
-    let cardProjectItem = cardHTML.querySelector("#project-item");
+function createExpCard(exps){
 
-    cardJobTitle.value = jobTitle;
-    cardCompanyName.value = companyName;
-    cardStartDate.value = startDate;
-    cardEndDate.value = endDate;
-    cardCurrentJob.value = currentJob;
-    cardLocation.value = location;
-    cardProjectItem.value = projectItem;
 
-    mainContainer.appendChild(cardHTML);
+    for(let i=0;i<exps.length;i++){
+        const cardTemplate = document.getElementById('exp-template');
+        const cardHTML = cardTemplate.content.cloneNode(true);
+        
+        let cardID = cardHTML.querySelector('#exp-container')
+        let cardJobTitle = cardHTML.querySelector('#job-title');
+        let cardCompanyName = cardHTML.querySelector("#company-name");
+        let cardStartDate = cardHTML.querySelector("#start-date");
+        let cardEndDate = cardHTML.querySelector("#end-date");
+        let cardCurrentJob = cardHTML.querySelector("#current-job");
+        let cardLocation = cardHTML.querySelector("#location");
+        let cardProjectItem = cardHTML.querySelector("#project-item");
+
+        cardID.dataset.index = i; 
+        cardJobTitle.value = exps[i]["jobTitle"];
+        cardCompanyName.value = exps[i]["companyName"];
+        cardStartDate.value = exps[i]["startDate"];
+        cardEndDate.value = exps[i]["endDate"];
+        cardCurrentJob.value = exps[i]["currentJob"];
+        cardLocation.value = exps[i]["location"];
+        cardProjectItem.value = exps[i]["projectItem"];
+        
+        mainContainer.appendChild(cardHTML);
+   
+    }
+
+
+
 
     disableCard(mainContainer);
 }
@@ -156,17 +195,13 @@ function createExpCard(jobTitle, companyName, startDate, endDate, currentJob, lo
 chrome.storage.local.get(["experiences"], (res)=>{
     let exps=res.experiences
 //Add case for array.length ===0
-    for(let i=0;i<exps.length;i++){
-            
-        createExpCard(
-            exps[i]["jobTitle"],
-            exps[i]["companyName"],
-            exps[i]["startDate"],
-            exps[i]["endDate"],
-            exps[i]["currentJob"],
-            exps[i]["location"],
-            exps[i]["projectItem"] )
-        
+    
+    if(!exps){
+        chrome.storage.local.set({
+            experiences: []
+        });
+    } else{
+        createExpCard(exps);
     }
     
 })
@@ -193,9 +228,9 @@ target:
 
     /*
         Structure:
-            (x) Adding experience to side panel 
+            (X) Adding experience to side panel 
             storing experience  
-            Experience is initialized from the stored info
+            (X) Experience is initialized from the stored info
             Injecting javascript to workaday
 
 
