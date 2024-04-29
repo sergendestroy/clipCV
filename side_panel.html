@@ -1,6 +1,8 @@
 <html>
     <head>
         <title>clipCV</title>
+        <link rel="stylesheet" href="style.css">
+
     </head>
 
     <body>
@@ -9,50 +11,50 @@
                         
             </div>
         <template id="exp-template">
-            <div id="exp-container" class="exp-container" disabled>
-                <label id="index">
+            <div id="exp-container" class="card exp-container" disabled>
+                <label id="index" class="index-label">
                     
                 </label>
 
-                <div id="edit-container">
+                <div id="edit-container" class="edit-wrapper">
                     <button id="edit-btn" class="edit-btn">Edit</button>
                 </div>  
-                <div id="copy-container">
+                <div id="copy-container" class="copy-wrapper">
                     <button id="copy-btn" class="copy-btn">Copy</button>
                 </div>
-                <div id="job-title-container">
+                <div id="job-title-container" class="jot-title-wrapper">
                         <label>Job Title</label>
                         <input id="job-title" class="edit-field" placeholder="Spice Harvester Operator II"></input>
                 </div>
-                <div id="company-container">
+                <div id="company-container" class="company-wrapper">
                     <label id="company-lbl">Company Name:</label>
                     <input id="company-name" class="edit-field" placeholder="House Harkonnen"></input>
                 </div>
-                <div id="exp-start-date-container">
+                <div id="exp-start-date-container" class="start-date-wrapper">
                     <label id="start-lbl">Start Date:</label>
                     <input id="start-date" class="edit-field" type="date" placeholder="MM/DD/YYYY" ></input>
                 </div>
-                <div id="exp-end-date-container">
+                <div id="exp-end-date-container" class="end-date-wrapper">
                     <label id="end-lbl">End Date:</label>
                     <input id="end-date" class="edit-field" type="date" placeholder="MM/DD/YYYY"></input>
                 </div>
-                <div id="current-check-container">
+                <div id="current-check-container" class="current-wrapper">
                     <input id="current-job" class="edit-field" type="checkbox">Current Job</input>
                 </div>
-                <div id="location-container">
+                <div id="location-container" class="location-wrapper">
                     <label id="loc-label">Job Location:</label>
                     <input id="location" class="edit-field" placeholder="Arrakis"></input>
                 </div>                 
-                <div id="project-container">
+                <div id="project-container" class="project-wrapper">
                      <label id="projects-lbl">Describe your projects and responsibilities</label>
                        <div id="project-item-container">
                             <textarea id="project-item" class="edit-field" placeholder="Add your projects and responsibilities here..."></textarea>
                         </div>
                 </div>
-                <div id="save-container">
+                <div id="save-container" class="save-btn-wrapper">
                     <button id="save-btn" class="edit-field save-experience">Save</button>
                 </div>
-                <div id="delete-container">
+                <div id="delete-container" class="delete-btn-wrapper">
                     <button id="delete-btn" class="edit-field delete-exp">Delete</button>
                 </div>
                 

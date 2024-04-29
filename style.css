@@ -1,22 +1,75 @@
 :root{
-    --clr-neon: hsl(#67B271, 100%, 54%)
   }
   
   head{
     text-align: center;
   }
+ 
 
-  label{
-    color:black;
-    text-shadow:-2px 2px 2px darkblue;
-    font-size: 0.865rem;
-    font-weight: bold;
-  }
-  
-  button:disabled{
+  .card {
+    margin: 5px;
+    padding:5px;
+    display: grid;
 
-  }
+    grid-template-columns: auto 5fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 4fr auto;
+    border-style:solid;
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+.edit-wrapper{
+  grid-column: 3;
+  grid-row:1;
+  background-color: blue;
+
+}
+.edit-btn{
   
-  input:disabled{
-    
-  }
+}
+
+.copy-wrapper{
+  grid-column:4;
+  grid-row:1;
+}
+  
+.job-title-wrapper{
+  grid-column: 2;
+  grid-row: 1;
+
+}
+
+.company-wrapper{
+  grid-column:1;
+  grid-row:2
+}
+
+.start-date-wrapper{
+
+}
+#stard-date{}
+
+.end-date-wrapper{
+
+}
+
+.location-wrapper{
+  grid-column:4;
+  grid-row:2;
+}
+.project-wrapper{
+  grid-column:1 / 4;
+  grid-row:3;
+}
+
+.save-btn-wrapper{
+  grid-column: 4;
+  grid-row: 4;
+}
+
+.delete-btn-wrapper{
+  grid-column: 1;
+  grid-row:4;
+}

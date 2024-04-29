@@ -125,19 +125,24 @@ document.addEventListener("DOMContentLoaded",function (){
         //use getter to retrieve data from storage.local
         chrome.storage.local.get(["experiences"], (res) =>{
             let exps = res.experiences;
+        
+            let cleanExps = exps.filter((e) => e.expId != currIndex);
+        //reassign index numbers from 0 to n-total
+            cleanExps.forEach((exp)=> exp.expId = cleanExps.indexOf(exp));
 
-            let cleanExps = exps.filter((e) => e.expId !== currIndex);
         //delete in place the element of index data-index in the array
             chrome.storage.local.set({
                 experiences: cleanExps
-            });           
+            });
+            
+            
             chrome.runtime.sendMessage({exps, currIndex}); 
         });
 
         //do event.target.closest('div.exp-container').remove()
         event.target.closest('div.exp-container').remove();
 
-        //reassign index numbers from 0 to n-total
+
     };
     
     addMoreBtn.addEventListener("click",  () => {
@@ -208,6 +213,8 @@ chrome.storage.local.get(["experiences"], (res)=>{
 
 }); 
 /*
+
+
 target:
     workdayjobs
     taleo
@@ -216,9 +223,8 @@ target:
     icims
     gusto
 
+    make sure you can delete the entry form when you're about to enter the data
 
-
-    use event delegation to the "eperience-container-div"
 */
 // get local storage data
 // check if something exists
