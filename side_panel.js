@@ -118,7 +118,13 @@ document.addEventListener("DOMContentLoaded",function (){
         let form = event.target.closest('div.exp-container');
 
         //if parent container has index, then proceed with delete, else, return
-        if(!form.dataset.index) return;
+        if(!form.dataset.index) {
+            event.target.closest('div.exp-container').remove();
+
+
+        }else{
+
+        
 
         //retrieve data index of parent container of element clicked
         let currIndex = form.dataset.index;
@@ -141,7 +147,7 @@ document.addEventListener("DOMContentLoaded",function (){
 
         //do event.target.closest('div.exp-container').remove()
         event.target.closest('div.exp-container').remove();
-
+        }
 
     };
     
@@ -214,6 +220,10 @@ chrome.storage.local.get(["experiences"], (res)=>{
 }); 
 /*
 
+Next: 
+    1. Add content script to inject data onto forms
+    2. Add "enhance with AI" -> it either creates or uses the prompt "use data A and data B to create a new card"
+    3. Make sure that logic accounts for "current" checkbox
 
 target:
     workdayjobs
@@ -223,8 +233,7 @@ target:
     icims
     gusto
 
-    make sure you can delete the entry form when you're about to enter the data
-
+    make sure current job disables end-date -> listener?
 */
 // get local storage data
 // check if something exists
