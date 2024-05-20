@@ -24,6 +24,9 @@ document.addEventListener("DOMContentLoaded",function (){
                 divElms[element].disabled = false;    
                 test.innerText = divElms[element];  
         }
+        mainContainer.addEventListener('click', (event)=>{
+            enhanceJobExp(event, jobDesc);
+        });
     };
     //saving record
     let saveExp = function (event){
