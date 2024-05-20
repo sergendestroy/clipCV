@@ -2,10 +2,10 @@
 
 chrome.sidePanel.setPanelBehavior({openPanelOnActionClick: true}).catch((error)=> console.log(error));
 
-
-chrome.runtime.onMessage.addListener(
-    (msg) =>{
-    console.log(`message sent: ${JSON.stringify(msg.exps)}, ${msg.currIndex}`) //
+  
+chrome.runtime.onMessage.addListener( (msg) =>{
+    if (!msg) return;
+    console.log(`message sent: ${msg}`);
     }
 )
 

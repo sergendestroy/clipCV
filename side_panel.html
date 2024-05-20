@@ -24,7 +24,7 @@
                 </div>
                 <div id="job-title-container" class="job-title-wrapper">
                         <input id="job-title" class="edit-field" placeholder="Spice Harvester Operator II"></input>
-                        <label id="job-title-lbl" class="lbl">Job Title</label>
+                        <label id="job-title-lbl" class="lbl">Job Title:</label>
 
                     </div>
                 <div id="company-container" class="company-wrapper">
@@ -52,8 +52,15 @@
                             <textarea id="project-item" class="edit-field" placeholder="Add your projects and responsibilities here..."></textarea>
                         </div>
                 </div>
+
                 <div id="save-container" class="save-btn-wrapper">
                     <button id="save-btn" class="edit-field save-experience">&#128190;</button>
+                </div>
+                <div id="enhance-container" class="enhance-wrapper">
+                    <button id="enhance-btn" class="edit-field enhance-exp">
+                        Enhance ith AI &#10024;     
+                    </button>
+
                 </div>
                 <div id="delete-container" class="delete-btn-wrapper">
                     <button id="delete-btn" class="edit-field delete-exp">&#x1F5D1;</button>
@@ -63,8 +70,17 @@
             </template>
 
         </div>
+    
         <div id="add-more">
             <button id="add-more-btn">&#10133;</button>  
+        </div>
+    
+        <div id="byok-container" class="sticky-content">
+            <hr>
+            <p style="text-align: center;">Want to tailor your job expriences with AI?</p>
+            <h2>Add your own <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">OpenAI API key</a></h2>
+            <label>API Key</label>
+            <input id="user-api-key" type="text" ></input>
         </div>
     </body>
 <script src="side_panel.js"></script>

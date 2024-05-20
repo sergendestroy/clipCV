@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded",function (){
 
     const addMoreBtn = document.getElementById('add-more-btn');
  
+    const userApiKey = document.getElementById('user-api-key');
+
     let disableCard = function(cardElmnts){
         //TODO: make the input the elementbyclassname list, so delegate that to the scope where the fcn is called
         let divElms = cardElmnts.getElementsByClassName("edit-field");
@@ -15,6 +17,14 @@ document.addEventListener("DOMContentLoaded",function (){
                 divElms[element].disabled = true;    
                 test.innerText = divElms[element];  
         }};
+
+    let enableGpt= function(){
+        let divElms = mainContainer.getElementsByClassName("enhance-exp");
+        for (let element =0;element<divElms.length;element++){
+                divElms[element].disabled = false;    
+                test.innerText = divElms[element];  
+        }
+    };
     //saving record
     let saveExp = function (event){
 
@@ -109,7 +119,7 @@ document.addEventListener("DOMContentLoaded",function (){
             //https://stackoverflow.com/questions/71321983/copy-to-clipboard-in-chrome-extension-v3/71336017#71336017
         }) 
 
-    }
+    };
     
     //deleting record
     let delExp = function (event) {
@@ -121,10 +131,7 @@ document.addEventListener("DOMContentLoaded",function (){
         if(!form.dataset.index) {
             event.target.closest('div.exp-container').remove();
 
-
         }else{
-
-        
 
         //retrieve data index of parent container of element clicked
         let currIndex = form.dataset.index;
@@ -162,11 +169,11 @@ document.addEventListener("DOMContentLoaded",function (){
         saveExp(event);
         delExp(event);
         editExp(event);
-    });
-
-
+  
+    }); 
+  
 //creates the ExpCard from the template
-function createExpCard(exps){
+    function createExpCard(exps){
 
 
     for(let i=0;i<exps.length;i++){
@@ -195,18 +202,92 @@ function createExpCard(exps){
    
     }
 
-
-
-
     disableCard(mainContainer);
-}
+
+    }
+
 //renders the card for display: we will use this during initialization when we use the chrome.storage.local.get() when opening the panel
 
-//initializing: if data exists already, retrieve and display 
-chrome.storage.local.get(["experiences"], (res)=>{
-    let exps=res.experiences
-//Add case for array.length ===0
+    let listenSelection = () =>{
+    chrome.runtime.onMessage.addListener((msg) => {
+        if (!msg) return;
+        let jobDesc = msg;
+        test.innerText = jobDesc;
+        enableGpt();
+        }
+        );
+    }
     
+    let storeApiKey = (selectionListener) => {
+        userApiKey.addEventListener('change', (event) => {
+            let user_key = event.target.value;
+            if (user_key.length > 10) {
+                test.innerText = user_key;
+                chrome.storage.local.set({
+                    apiKey: user_key
+                });
+                selectionListener();
+
+            }
+        });
+    };
+
+
+let enhanceJobExp = function (event){
+    //retrieve current data-index job description experience
+    //retrieve highlighted job description
+    //ask gpt the prompt "Improve the job experience description using the job description as guide"
+    //find and replace job description on card
+
+    if(!event.target.matches('#enhance-btn')) return;
+    let form = event.target.closest('div.exp-container');
+    let jobExp = form.querySelector("#project-item").value;
+    let jobDesc = "";
+
+    const prompt = `Tailor the job experience description based of the job descripion.
+                    Job experience: ${jobExp}
+                    Job description: ${jobDesc}`;
+
+    const apiKey =  userApiKey.value;
+
+    const apiURL = "https://api.openai.com/v1/chat/completions";
+
+    fetch(apiURL, {
+        method: "POST",
+        headers:{
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+            "model": "gpt-3.5-turbo-16k-0613",
+            " messages":[
+                {"role": "user", "content": prompt}
+              ],
+            "max_tokens": 100,
+            "temperature":0
+            
+        }),
+    })
+    .then(response => response.json())
+    .then(data => console.log(data.choices[0].text))
+    .catch(error => console.error(error));
+
+};
+
+
+//initializing: if data exists already, retrieve and display 
+chrome.storage.local.get(["experiences", "apiKey"], (res)=>{
+    let exps=res.experiences;
+    let apiKey = res.apiKey;
+
+    userApiKey.value = apiKey? apiKey:"";
+
+    if (!apiKey){
+        storeApiKey(listenSelection());
+    }else{
+        listenSelection();
+    }
+
     if(!exps){
         chrome.storage.local.set({
             experiences: []
@@ -223,7 +304,13 @@ chrome.storage.local.get(["experiences"], (res)=>{
 Next: 
     1. Add content script to inject data onto forms
     2. Add "enhance with AI" -> it either creates or uses the prompt "use data A and data B to create a new card"
+        a. addEventListener: when something is highlighted AND the API key input is filled, the "enhance with AI" button gets enabled
+        b. onClick: the "Improve the current <projectItem> text based off the following job description: <highlightedText>" prompt is ran
+        c. update tokens count
+        d. display tokens count next to AI button
     3. Make sure that logic accounts for "current" checkbox
+    4. Make sure to display UUID
+    5. Glitter animation for "enhance with AI" btn
 
 target:
     workdayjobs
